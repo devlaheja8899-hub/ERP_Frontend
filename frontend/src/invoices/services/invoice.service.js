@@ -1,0 +1,103 @@
+const sampleInvoice = {
+  company: {
+    logo: "https://dummyimage.com/120x40/ffffff/0f172a.png&text=VALLABH",
+    name: "Vallabh Impex (India) Pvt. Ltd.",
+    address: "14, 3rd Floor, Ahmed Mansion, 156 Lamington Road, Mumbai - 400007",
+    gstin: "27AAACV3586B1ZE",
+    state: "Maharashtra",
+    stateCode: "27",
+    cin: "U51900MH1997PTC108420",
+    email: "accounts@vallabhimpex.com",
+    phone: "+91 22 1234 5678",
+    pan: "AAACV3586B",
+  },
+  invoice: {
+    no: "453",
+    eWayBillNo: "301211480742",
+    date: "2026-03-13",
+    deliveryNote: "DN-453",
+    paymentTerms: "30 Days",
+    referenceNo: "QA-2026-01 / 13-Mar-26",
+    buyersOrderNo: "PO-44781",
+    dispatchDocNo: "DC-453",
+    dispatchedThrough: "Blue Dart Surface",
+    destination: "Manesar, Haryana",
+    termsOfDelivery: "Door Delivery",
+  },
+  billTo: {
+    companyName: "Syrma SGS Technology Limited (Manesar)",
+    address: "Plot No. 174, Sector 4, IMT Manesar, Gurugram, Haryana - 122050",
+    gstin: "06AACCS7450D1ZC",
+    pan: "AACCS7450D",
+    state: "Haryana",
+    stateCode: "06",
+    contactPerson: "Ashutosh K. Singh",
+    phone: "+91 98115 29217",
+  },
+  dispatch: {
+    dispatchAddress: "Warehouse: Bhiwandi Logistics Park, Mumbai",
+    deliveryAddress: "Syrma SGS Technology Limited, Plot No. 174, Sector 4, IMT Manesar, Gurugram, Haryana - 122050",
+    dispatchDocNo: "DC-453",
+    destination: "Manesar, Haryana",
+  },
+  items: [
+    {
+      si: 1,
+      description: "51K RMC CQ06 1/4W-S 1% Royalohm (CQ06S4F102T5E) CQ Autograde",
+      hsn: "85331000",
+      quantity: 50000,
+      unit: "PCS",
+      rate: 0.18,
+    },
+    {
+      si: 2,
+      description: "820E RMC CQ03 1/10WS 1% Royalohm (CQ03SAF8200T5E)",
+      hsn: "85331000",
+      quantity: 10000,
+      unit: "PCS",
+      rate: 0.06,
+    },
+    {
+      si: 3,
+      description: "6K8 RMC CQ02 1/10WS 1% Royalohm (CQ03SAF6801T5E)",
+      hsn: "85331000",
+      quantity: 5000,
+      unit: "PCS",
+      rate: 0.06,
+    },
+    {
+      si: 4,
+      description: "82E RMC CQ05 1/8WS 1% Royalohm (CQ05S8F8201T5E)",
+      hsn: "85331000",
+      quantity: 15000,
+      unit: "PCS",
+      rate: 0.07,
+    },
+  ],
+  taxes: [
+    {
+      label: "IGST",
+      rate: 18,
+    },
+  ],
+  adjustments: {
+    discount: 0,
+    shipping: 0,
+    roundOff: 0,
+  },
+  bankDetails: {
+    bankName: "Bank of Maharashtra",
+    accountNumber: "60504330561",
+    branch: "S. P. Road, Mumbai",
+    ifsc: "MAHB0000067",
+  },
+  declaration:
+    "We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.",
+  preparedBy: "Accounts Department",
+  verifiedBy: "Finance Controller",
+  footerNote: "This is a Computer Generated Invoice",
+};
+
+export function getInvoice() {
+  return sampleInvoice;
+}

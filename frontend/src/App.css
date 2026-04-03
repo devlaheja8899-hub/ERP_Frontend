@@ -114,3 +114,23 @@ input, textarea, select {
   padding: 40px;
   color: #6b7280;
 }
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .invoice-print-container,
+  .invoice-print-container * {
+    visibility: visible !important;
+  }
+
+  .invoice-print-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}
