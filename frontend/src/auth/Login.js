@@ -18,9 +18,10 @@ function Login() {
           password,
         }
       );
-
-      localStorage.setItem("access_token", response.data.access);
-      localStorage.setItem("refresh_token", response.data.refresh);
+      console.log("Login successful:", response.data);
+      console.log("Received tokens:", response.data.data.access, response.data.refresh);
+      localStorage.setItem("access_token", response.data.data.access);
+      localStorage.setItem("refresh_token", response.data.data.refresh);
 
       console.log("ACCESS TOKEN:", response.data.access);
 

@@ -9,6 +9,11 @@ function Navbar() {
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/customers">Customers</Link>
         <Link to="/invoices">Invoices</Link>
+        <Link to="/quotations">Quotations</Link>
+        <Link to="/purchaseorders">Purchase Orders</Link>
+        <Link to="/salesorders">Sales Orders</Link>
+        <Link to="/supplier-quotations">Supplier Quotations</Link>
+        <Link to="/stock-summary">Stock Summary</Link>
         <Link to="/logout">Logout</Link>
       </div>
     </div>
@@ -30,14 +35,3 @@ const styles = {
 };
 
 export default Navbar;
-
-import Navbar from "./components/Navbar";
-
-function Dashboard() {
-  return (
-    <>
-      <Navbar />
-      <h1 style={{ padding: "20px" }}>Welcome to ERP Dashboard</h1>
-    </>
-  );
-}

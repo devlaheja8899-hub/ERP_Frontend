@@ -6,8 +6,8 @@ export const loginUser = async (username, password) => {
     password,
   });
 
-  localStorage.setItem("access", response.data.access);
-  localStorage.setItem("refresh", response.data.refresh);
+  localStorage.setItem("access", response.data.data.access);
+  localStorage.setItem("refresh", response.data.data.refresh);
 
   return response.data;
 };

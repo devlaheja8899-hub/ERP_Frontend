@@ -26,6 +26,34 @@ function Dashboard() {
       path: "/quotations",
       color: "#f59e0b",
       icon: "📋"
+    },
+    {
+      title: "Purchase Orders",
+      description: "Manage supplier purchase orders",
+      path: "/purchaseorders",
+      color: "#6366f1",
+      icon: "🛒"
+    },
+    {
+      title: "Sales Orders",
+      description: "Track sales orders and fulfillment",
+      path: "/salesorders",
+      color: "#d946ef",
+      icon: "💼"
+    },
+    {
+      title: "Supplier Quotations",
+      description: "Review supplier quotation requests",
+      path: "/supplier-quotations",
+      color: "#14b8a6",
+      icon: "📦"
+    },
+    {
+      title: "Stock Summary",
+      description: "Monitor inventory and stock levels",
+      path: "/stock-summary",
+      color: "#f97316",
+      icon: "📊"
     }
   ];
 
@@ -39,7 +67,7 @@ function Dashboard() {
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ marginBottom: "30px" }}>
             <h1 style={{ margin: "0 0 10px 0", color: "#1f2937", fontSize: "2.5rem" }}>
-              Welcome to ERP Dashboard
+              Welcome to Valda Software Services Dashboard
             </h1>
             <p style={{ margin: 0, color: "#6b7280", fontSize: "1.1rem" }}>
               Manage your business operations efficiently

@@ -4,6 +4,10 @@ import Dashboard from "./auth/Dashboard";
 import Customers from "./customers/Customers";
 import Invoices from "./invoices/Invoices";
 import Quotations from "./quotations/Quotations";
+import PurchaseOrders from "./purchaseorders/PurchaseOrders";
+import SalesOrders from "./salesorders/SalesOrders";
+import SupplierQuotations from "./supplierquotations/SupplierQuotations";
+import StockSummary from "./stocksummary/StockSummary";
 
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("access_token");
@@ -50,6 +54,42 @@ function App() {
           element={
             <PrivateRoute>
               <Quotations />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/purchaseorders"
+          element={
+            <PrivateRoute>
+              <PurchaseOrders />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/salesorders"
+          element={
+            <PrivateRoute>
+              <SalesOrders />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/supplier-quotations"
+          element={
+            <PrivateRoute>
+              <SupplierQuotations />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/stock-summary"
+          element={
+            <PrivateRoute>
+              <StockSummary />
             </PrivateRoute>
           }
         />

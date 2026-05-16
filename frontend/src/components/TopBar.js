@@ -16,6 +16,10 @@ function TopBar() {
     { path: "/customers", label: "Customers" },
     { path: "/invoices", label: "Invoices" },
     { path: "/quotations", label: "Quotations" },
+    { path: "/purchaseorders", label: "Purchase Orders" },
+    { path: "/salesorders", label: "Sales Orders" },
+    { path: "/supplier-quotations", label: "Supplier Quotations" },
+    { path: "/stock-summary", label: "Stock Summary" },
   ];
 
   return (
