@@ -27,7 +27,10 @@ export default function InvoiceItemsTable({ items }) {
       { Header: "HSN/SAC", accessor: "hsn", align: "center" },
       { Header: "Quantity", accessor: "quantity", align: "center" },
       { Header: "Rate", accessor: "rate", Cell: ({ value }) => formatCurrency(value), align: "right" },
-      { Header: "Per", accessor: "unit", align: "center" },
+      // { Header: "Per", accessor: "unit", align: "center" },
+      { Header: "MPN", accessor: "mpn", align: "center" },
+      { Header: "MFR", accessor: "mfr", align: "center" },
+      { Header: "DC", accessor: "dc", align: "center" },
       { Header: "Amount", accessor: "amount", Cell: ({ value }) => formatCurrency(value), align: "right" },
     ],
     []

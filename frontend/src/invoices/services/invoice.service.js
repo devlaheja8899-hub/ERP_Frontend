@@ -29,7 +29,7 @@ const sampleInvoice = {
     address: "Plot No. 174, Sector 4, IMT Manesar, Gurugram, Haryana - 122050",
     gstin: "06AACCS7450D1ZC",
     pan: "AACCS7450D",
-    state: "Haryana",
+    state: "Mumbai",
     stateCode: "06",
     contactPerson: "Ashutosh K. Singh",
     phone: "+91 98115 29217",
@@ -48,6 +48,9 @@ const sampleInvoice = {
       quantity: 50000,
       unit: "PCS",
       rate: 0.18,
+      mpn: "233",
+      mfr: "Royalohm",
+      dc: "2026",
     },
     {
       si: 2,
@@ -56,6 +59,9 @@ const sampleInvoice = {
       quantity: 10000,
       unit: "PCS",
       rate: 0.06,
+       mpn: "233",
+      mfr: "Royalohm",
+      dc: "2026",
     },
     {
       si: 3,
@@ -64,6 +70,9 @@ const sampleInvoice = {
       quantity: 5000,
       unit: "PCS",
       rate: 0.06,
+       mpn: "234",
+      mfr: "Royalohm",
+      dc: "2026",
     },
     {
       si: 4,
@@ -72,6 +81,9 @@ const sampleInvoice = {
       quantity: 15000,
       unit: "PCS",
       rate: 0.07,
+       mpn: "238",
+      mfr: "test",
+      dc: "2028",
     },
   ],
   taxes: [
