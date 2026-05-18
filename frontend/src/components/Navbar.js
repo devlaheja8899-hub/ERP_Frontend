@@ -14,6 +14,7 @@ function Navbar() {
         <Link to="/salesorders">Sales Orders</Link>
         <Link to="/supplier-quotations">Supplier Quotations</Link>
         <Link to="/stock-summary">Stock Summary</Link>
+        <Link to="/movement-analysis">Movement Analysis</Link>
         <Link to="/logout">Logout</Link>
       </div>
     </div>

@@ -1,224 +1,133 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import TopBar from "../components/TopBar";
-import { fetchSupplierQuotations } from "./services/supplierquotation.service";
+import { useReactToPrint } from "react-to-print";
+import SupplierQuotationActions from "./components/SupplierQuotationActions.jsx";
+import SupplierQuotationDocument from "./components/SupplierQuotationDocument.jsx";
+import {
+  fetchSupplierQuotations,
+  mapSupplierQuotationForPrint,
+} from "./services/supplierquotation.service";
+import { downloadSupplierQuotationPdf } from "./utils/downloadSupplierQuotationPdf";
+import { getSupplierQuotationPrintStyles } from "./utils/printSupplierQuotation";
 
-function SupplierQuotations() {
-  const [quotes, setQuotes] = useState([]);
-  const [filteredQuotes, setFilteredQuotes] = useState([]);
+export default function SupplierQuotations() {
+  const printRef = useRef(null);
+
+  const [quotations, setQuotations] = useState([]);
+  const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currencyFilter, setCurrencyFilter] = useState("all");
+  const [error, setError] = useState("");
+
+  const selectedQuotation = useMemo(() => {
+    if (!quotations.length) return null;
+
+    const found = quotations.find(
+      (quotation) => String(quotation.id) === String(selectedId)
+    );
+
+    return mapSupplierQuotationForPrint(found || quotations[0]);
+  }, [quotations, selectedId]);
 
   useEffect(() => {
-    let isMounted = true;
+    async function loadSupplierQuotations() {
+      try {
+        setLoading(true);
+        const data = await fetchSupplierQuotations();
+        setQuotations(data);
 
-    fetchSupplierQuotations()
-      .then((data) => {
-        if (!isMounted) return;
-        setQuotes(data);
-        setFilteredQuotes(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (!isMounted) return;
+        if (data.length > 0) {
+          setSelectedId(data[0].id);
+        }
+      } catch (err) {
         setError(err.message || "Failed to fetch supplier quotations");
+      } finally {
         setLoading(false);
-      });
+      }
+    }
 
-    return () => {
-      isMounted = false;
-    };
+    loadSupplierQuotations();
   }, []);
 
-  useEffect(() => {
-    let filtered = Array.isArray(quotes) ? quotes : [];
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: selectedQuotation
+      ? `SupplierQuotation-${selectedQuotation.quotation.quoteNumber}`
+      : "SupplierQuotation",
+    pageStyle: getSupplierQuotationPrintStyles(),
+  });
 
-    if (searchTerm.trim()) {
-      const search = searchTerm.toLowerCase();
-      filtered = filtered.filter((quote) =>
-        quote.quote_number?.toLowerCase().includes(search) ||
-        quote.company_name?.toLowerCase().includes(search) ||
-        quote.contact_person?.toLowerCase().includes(search) ||
-        quote.rfq_reference_no?.toLowerCase().includes(search)
-      );
-    }
+  const handleDownloadPDF = async () => {
+    if (!printRef.current || !selectedQuotation) return;
 
-    if (currencyFilter !== "all") {
-      filtered = filtered.filter((quote) => quote.currency === currencyFilter);
-    }
-
-    setFilteredQuotes(filtered);
-  }, [searchTerm, currencyFilter, quotes]);
-
-  if (loading) {
-    return (
-      <>
-        <TopBar />
-        <div style={{ padding: "30px", textAlign: "center" }}>
-          <div style={{ fontSize: "18px", color: "#6b7280" }}>
-            Loading supplier quotations...
-          </div>
-        </div>
-      </>
+    await downloadSupplierQuotationPdf(
+      printRef.current,
+      `supplier-quotation-${selectedQuotation.quotation.quoteNumber}.pdf`
     );
-  }
-
-  if (error) {
-    return (
-      <>
-        <TopBar />
-        <div style={{ padding: "30px", textAlign: "center" }}>
-          <div style={{ fontSize: "18px", color: "#ef4444" }}>Error: {error}</div>
-        </div>
-      </>
-    );
-  }
+  };
 
   return (
-    <>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#e2e8f0_0%,_#f8fafc_45%,_#e2e8f0_100%)]">
       <TopBar />
-      <div style={{ padding: "30px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+
+      <main className="mx-auto max-w-6xl px-4 py-6">
+        <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 style={{ margin: 0, color: "#1f2937" }}>Supplier Quotations</h2>
-            <p style={{ margin: "8px 0 0", color: "#6b7280" }}>
-              Review supplier quotes and RFQ details.
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+              Supplier Quotation
+            </h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Supplier quotation received format with item, terms and price comparison.
             </p>
           </div>
-          <button style={addButtonStyle}>Create Supplier Quote</button>
-        </div>
 
-        <div style={{ display: "flex", gap: "15px", marginBottom: "20px", alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <label style={labelStyle}>Search:</label>
-            <input
-              type="text"
-              placeholder="Search by quote number, company, contact or RFQ"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={inputStyle}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <select
+              value={selectedId}
+              onChange={(e) => setSelectedId(e.target.value)}
+              className="min-w-[260px] rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm outline-none focus:border-slate-500"
+            >
+              {quotations.map((quotation) => (
+                <option key={quotation.id} value={quotation.id}>
+                  {quotation.quote_number} - {quotation.company_name}
+                </option>
+              ))}
+            </select>
+
+            <SupplierQuotationActions
+              onPrint={handlePrint}
+              onDownload={handleDownloadPDF}
+              disabled={!selectedQuotation}
             />
           </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <label style={labelStyle}>Currency:</label>
-            <select value={currencyFilter} onChange={(e) => setCurrencyFilter(e.target.value)} style={selectStyle}>
-              <option value="all">All</option>
-              <option value="INR">INR</option>
-              <option value="USD">USD</option>
-            </select>
-          </div>
-
-          <div style={{ fontSize: "14px", color: "#6b7280" }}>
-            Showing {filteredQuotes.length} of {quotes.length} supplier quotations
-          </div>
         </div>
 
-        {filteredQuotes.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
-            {quotes.length === 0 ? "No supplier quotations found." : "No supplier quotations match your search criteria."}
-          </div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={tableStyle}>
-              <thead>
-                <tr style={{ backgroundColor: "#f9fafb" }}>
-                  <th style={tableHeaderStyle}>Quote No</th>
-                  <th style={tableHeaderStyle}>Date</th>
-                  <th style={tableHeaderStyle}>Company</th>
-                  <th style={tableHeaderStyle}>Contact Person</th>
-                  <th style={tableHeaderStyle}>RFQ Ref</th>
-                  <th style={tableHeaderStyle}>Validity</th>
-                  <th style={tableHeaderStyle}>Currency</th>
-                  <th style={tableHeaderStyle}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredQuotes.map((quote) => (
-                  <tr key={quote.id} style={{ borderBottom: "1px solid #e5e7eb" }}>
-                    <td style={tableCellStyle}>{quote.quote_number || "-"}</td>
-                    <td style={tableCellStyle}>{quote.quotation_date ? new Date(quote.quotation_date).toLocaleDateString() : "-"}</td>
-                    <td style={tableCellStyle}>{quote.company_name || "-"}</td>
-                    <td style={tableCellStyle}>{quote.contact_person || "-"}</td>
-                    <td style={tableCellStyle}>{quote.rfq_reference_no || "-"}</td>
-                    <td style={tableCellStyle}>{quote.validity_date ? new Date(quote.validity_date).toLocaleDateString() : "-"}</td>
-                    <td style={tableCellStyle}>{quote.currency || "-"}</td>
-                    <td style={tableCellStyle}>
-                      <button style={actionButtonStyle("#3b82f6")}>View</button>
-                      <button style={actionButtonStyle("#ef4444")}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {loading && (
+          <div className="rounded-2xl bg-white p-6 text-center text-slate-600 shadow">
+            Loading supplier quotations...
           </div>
         )}
-      </div>
-    </>
+
+        {error && (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && !selectedQuotation && (
+          <div className="rounded-2xl bg-white p-6 text-center text-slate-600 shadow">
+            No supplier quotations found.
+          </div>
+        )}
+
+        {!loading && !error && selectedQuotation && (
+          <div className="overflow-x-auto rounded-[28px] border border-slate-200/80 bg-white/50 p-3 backdrop-blur-sm md:p-6">
+            <SupplierQuotationDocument
+              quotation={selectedQuotation}
+              forwardRef={printRef}
+            />
+          </div>
+        )}
+      </main>
+    </div>
   );
 }
-
-const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  borderRadius: "8px",
-  overflow: "hidden",
-};
-
-const tableHeaderStyle = {
-  padding: "12px 16px",
-  textAlign: "left",
-  fontWeight: "600",
-  color: "#374151",
-  borderBottom: "2px solid #e5e7eb",
-};
-
-const tableCellStyle = {
-  padding: "12px 16px",
-  color: "#6b7280",
-};
-
-const addButtonStyle = {
-  backgroundColor: "#3b82f6",
-  color: "white",
-  border: "none",
-  padding: "10px 20px",
-  borderRadius: "8px",
-  cursor: "pointer",
-  fontSize: "14px",
-};
-
-const labelStyle = {
-  fontSize: "14px",
-  fontWeight: "500",
-};
-
-const inputStyle = {
-  padding: "8px 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: "4px",
-  fontSize: "14px",
-  minWidth: "280px",
-};
-
-const selectStyle = {
-  padding: "8px 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: "4px",
-  fontSize: "14px",
-};
-
-const actionButtonStyle = (color) => ({
-  backgroundColor: color,
-  color: "white",
-  border: "none",
-  padding: "6px 12px",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "12px",
-  marginRight: "8px",
-});
-
-export default SupplierQuotations;

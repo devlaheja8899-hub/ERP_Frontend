@@ -54,6 +54,13 @@ function Dashboard() {
       path: "/stock-summary",
       color: "#f97316",
       icon: "📊"
+    },
+    {
+      title: "Movement Analysis",
+      description: "Track inward and outward stock movement",
+      path: "/movement-analysis",
+      color: "#2563eb",
+      icon: "📊"
     }
   ];
 

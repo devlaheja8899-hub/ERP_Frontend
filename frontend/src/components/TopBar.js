@@ -20,6 +20,7 @@ function TopBar() {
     { path: "/salesorders", label: "Sales Orders" },
     { path: "/supplier-quotations", label: "Supplier Quotations" },
     { path: "/stock-summary", label: "Stock Summary" },
+    { path: "/movement-analysis", label: "Movement Analysis", icon: "📊" },
   ];
 
   return (
@@ -60,7 +61,10 @@ function TopBar() {
                 e.target.style.backgroundColor = "transparent";
               }}
             >
-              {item.label}
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                {item.icon && <span>{item.icon}</span>}
+                {item.label}
+              </span>
             </button>
           ))}
         </nav>

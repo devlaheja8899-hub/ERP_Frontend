@@ -8,7 +8,7 @@ import PurchaseOrders from "./purchaseorders/PurchaseOrders";
 import SalesOrders from "./salesorders/SalesOrders";
 import SupplierQuotations from "./supplierquotations/SupplierQuotations";
 import StockSummary from "./stocksummary/StockSummary";
-
+import MovementAnalysis from "./movementanalysis/pages/MovementAnalysis";
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("access_token");
   console.log("PRIVATE ROUTE TOKEN:", token);
@@ -90,6 +90,14 @@ function App() {
           element={
             <PrivateRoute>
               <StockSummary />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/movement-analysis"
+          element={
+            <PrivateRoute>
+              <MovementAnalysis />
             </PrivateRoute>
           }
         />
