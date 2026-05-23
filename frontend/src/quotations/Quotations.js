@@ -3,6 +3,7 @@ import TopBar from "../components/TopBar";
 import { useReactToPrint } from "react-to-print";
 import QuotationActions from "./components/QuotationActions";
 import QuotationDocument from "./components/QuotationDocument";
+import QuotationItemForm from "./components/QuotationItemForm";
 import { fetchQuotations, mapQuotationForPrint } from "./services/quotation.service";
 import { downloadQuotationPdf } from "./utils/downloadQuotationPdf";
 import { getQuotationPrintStyles } from "./utils/printQuotation";
@@ -12,28 +13,40 @@ export default function Quotations() {
 
   const [quotations, setQuotations] = useState([]);
   const [selectedQuotation, setSelectedQuotation] = useState(null);
+  const [selectedQuotationId, setSelectedQuotationId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchQuotations()
-      .then((data) => {
-        setQuotations(data);
-
-        if (data.length > 0) {
-          setSelectedQuotation(mapQuotationForPrint(data[0]));
-        }
-
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message || "Failed to fetch quotations");
-        setLoading(false);
-      });
+    loadQuotations();
   }, []);
 
+  const loadQuotations = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchQuotations();
+      setQuotations(data);
+
+      if (data.length > 0) {
+        setSelectedQuotationId(data[0].id);
+        setSelectedQuotation(mapQuotationForPrint(data[0]));
+      }
+
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || "Failed to fetch quotations");
+      setLoading(false);
+    }
+  };
+
   const handleSelectQuotation = (quotation) => {
+    setSelectedQuotationId(quotation.id);
     setSelectedQuotation(mapQuotationForPrint(quotation));
+  };
+
+  const handleItemAdded = async () => {
+    // Reload quotations to get the updated items
+    await loadQuotations();
   };
 
   const handlePrint = useReactToPrint({
@@ -100,15 +113,16 @@ export default function Quotations() {
             >
               {quotations.map((quotation) => (
                 <option key={quotation.id} value={quotation.id}>
-                  {quotation.quotation_no} -{" "}
-                  {quotation.customer?.company_name ||
-                    quotation.customer?.customer_name ||
-                    quotation.contact_person}
+                  {quotation.quotation_no} - {quotation.contact_person || "No Contact Person"}
                 </option>
               ))}
             </select>
           </div>
         )}
+
+        {/* {selectedQuotationId && (
+          <QuotationItemForm quotationId={selectedQuotationId} onItemAdded={handleItemAdded} />
+        )} */}
 
         {selectedQuotation ? (
           <div className="overflow-x-auto rounded-[28px] border border-slate-200/80 bg-white/50 p-3 backdrop-blur-sm md:p-6">

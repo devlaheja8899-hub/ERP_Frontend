@@ -1,119 +1,104 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 export default function MovementAnalysis() {
-  const [activeTab, setActiveTab] = useState("inward");
+  const itemsList = [
+    {
+      id: 1,
+      item_description: "STM32 Microcontroller",
+      mpn: "STM32F103",
+      package_type: "Tray",
+      category: "Industrial",
+      rate: 120,
+    },
+    {
+      id: 2,
+      item_description: "Automotive IC",
+      mpn: "ATMEGA328",
+      package_type: "Reel",
+      category: "Automotive",
+      rate: 90,
+    },
+    {
+      id: 3,
+      item_description: "Defence Sensor",
+      mpn: "SEN-900",
+      package_type: "Tray",
+      category: "Defence",
+      rate: 250,
+    },
+  ];
 
-  const [inwardData, setInwardData] = useState([]);
-  const [outwardData, setOutwardData] = useState([]);
-
-  const emptyForm = {
+  const [form, setForm] = useState({
+    item_id: "",
     item_description: "",
     mpn: "",
-    package_type: "Reel",
-    category: "Industrial",
+    package_type: "",
+    category: "",
     date: "",
     rate: "",
-    gross_profit_percent: "",
     purchase_date: "",
     current_stock: "",
+    inward_quantity: "",
+    inward_total_amount: "",
     billing_date: "",
     total_stock_sell: "",
-    total_quantity: "",
-    total_amount: "",
+    outward_quantity: "",
+    outward_total_amount: "",
+    gross_profit_percent: "",
+  });
+
+  const [movementInward, setMovementInward] = useState([
+    {
+      id: 1,
+      item_description: "STM32 Microcontroller",
+      mpn: "STM32F103",
+      package_type: "Tray",
+      category: "Industrial",
+      date: "2026-05-18",
+      purchase_date: "2026-05-18",
+      rate: 120,
+      current_stock: 100,
+      total_quantity: 100,
+      total_amount: 12000,
+      average_purchase: 120,
+    },
+  ]);
+
+  const [movementOutward, setMovementOutward] = useState([
+    {
+      id: 1,
+      item_description: "Automotive IC",
+      mpn: "ATMEGA328",
+      package_type: "Reel",
+      category: "Automotive",
+      date: "2026-05-17",
+      billing_date: "2026-05-17",
+      rate: 90,
+      gross_profit_percent: 12,
+      total_stock_sell: 50,
+      total_quantity: 50,
+      total_amount: 9000,
+      average_selling: 180,
+    },
+  ]);
+
+  const handleItemSelect = (e) => {
+    const selectedItem = itemsList.find(
+      (item) => item.id === Number(e.target.value)
+    );
+
+    if (selectedItem) {
+      setForm({
+        ...form,
+        item_id: selectedItem.id,
+        item_description: selectedItem.item_description,
+        mpn: selectedItem.mpn,
+        package_type: selectedItem.package_type,
+        category: selectedItem.category,
+        rate: selectedItem.rate,
+      });
+    }
   };
-
-  const [form, setForm] = useState(emptyForm);
-
-  const loadData = () => {
-    const inward = [
-      {
-        id: 1,
-        item_description: "STM32 Microcontroller",
-        mpn: "STM32F103",
-        package_type: "Tray",
-        category: "Industrial",
-        date: "2026-05-18",
-        rate: 120,
-        gross_profit_percent: 18,
-        total_amount: 12000,
-        average_purchase: 110,
-      },
-
-      {
-        id: 2,
-        item_description: "Automotive IC",
-        mpn: "ATMEGA328",
-        package_type: "Reel",
-        category: "Automotive",
-        date: "2026-05-17",
-        rate: 90,
-        gross_profit_percent: 12,
-        total_amount: 9000,
-        average_purchase: 85,
-      },
-
-      {
-        id: 3,
-        item_description: "Defence Sensor",
-        mpn: "SEN-900",
-        package_type: "Tray",
-        category: "Defence",
-        date: "2026-05-15",
-        rate: 250,
-        gross_profit_percent: -5,
-        total_amount: 25000,
-        average_purchase: 260,
-      },
-    ];
-
-    const outward = [
-      {
-        id: 1,
-        item_description: "Power MOSFET",
-        mpn: "IRF540",
-        package_type: "Reel",
-        category: "Industrial",
-        date: "2026-05-18",
-        rate: 150,
-        gross_profit_percent: 20,
-        total_amount: 15000,
-        average_selling: 145,
-      },
-
-      {
-        id: 2,
-        item_description: "CAN Controller",
-        mpn: "MCP2515",
-        package_type: "Tray",
-        category: "Automotive",
-        date: "2026-05-16",
-        rate: 180,
-        gross_profit_percent: 25,
-        total_amount: 18000,
-        average_selling: 170,
-      },
-
-      {
-        id: 3,
-        item_description: "Radar Processor",
-        mpn: "RDP-700",
-        package_type: "Tray",
-        category: "Defence",
-        date: "2026-05-12",
-        rate: 500,
-        gross_profit_percent: -8,
-        total_amount: 50000,
-        average_selling: 540,
-      },
-    ];
-
-    setInwardData(inward);
-    setOutwardData(outward);
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const handleChange = (e) => {
     setForm({
@@ -122,151 +107,103 @@ export default function MovementAnalysis() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const saveInward = () => {
+    const avg =
+      Number(form.inward_total_amount) / Number(form.inward_quantity || 1);
 
-    const newItem = {
+    const newInward = {
       id: Date.now(),
       item_description: form.item_description,
       mpn: form.mpn,
       package_type: form.package_type,
       category: form.category,
       date: form.date,
+      purchase_date: form.purchase_date,
       rate: form.rate,
-      gross_profit_percent: form.gross_profit_percent,
-      total_amount: form.total_amount,
-      average_purchase:
-        activeTab === "inward"
-          ? (
-              Number(form.total_amount) / Number(form.total_quantity || 1)
-            ).toFixed(2)
-          : undefined,
-
-      average_selling:
-        activeTab === "outward"
-          ? (
-              Number(form.total_amount) / Number(form.total_quantity || 1)
-            ).toFixed(2)
-          : undefined,
+      current_stock: form.current_stock,
+      total_quantity: form.inward_quantity,
+      total_amount: form.inward_total_amount,
+      average_purchase: avg.toFixed(2),
     };
 
-    if (activeTab === "inward") {
-      setInwardData([newItem, ...inwardData]);
-    } else {
-      setOutwardData([newItem, ...outwardData]);
-    }
-
-    setForm(emptyForm);
+    setMovementInward([newInward, ...movementInward]);
   };
 
-  const data = activeTab === "inward" ? inwardData : outwardData;
+  const saveOutward = () => {
+    const avg =
+      Number(form.outward_total_amount) / Number(form.outward_quantity || 1);
+
+    const newOutward = {
+      id: Date.now(),
+      item_description: form.item_description,
+      mpn: form.mpn,
+      package_type: form.package_type,
+      category: form.category,
+      date: form.date,
+      billing_date: form.billing_date,
+      rate: form.rate,
+      gross_profit_percent: form.gross_profit_percent,
+      total_stock_sell: form.total_stock_sell,
+      total_quantity: form.outward_quantity,
+      total_amount: form.outward_total_amount,
+      average_selling: avg.toFixed(2),
+    };
+
+    setMovementOutward([newOutward, ...movementOutward]);
+  };
 
   return (
-    <div
-      style={{
-        padding: "30px",
-        background: "#f4f6f9",
-        minHeight: "100vh",
-      }}
-    >
-      <h1
-        style={{
-          marginBottom: "20px",
-          color: "#1e293b",
-        }}
-      >
-        Movement Analysis
-      </h1>
+    <div style={{ padding: "25px", background: "#f4f6f9", minHeight: "100vh" }}>
+      <h2>Movement Analysis</h2>
 
-      <div style={{ marginBottom: "20px" }}>
-        <button
-          onClick={() => setActiveTab("inward")}
-          style={{
-            padding: "10px 20px",
-            marginRight: "10px",
-            border: "none",
-            borderRadius: "8px",
-            background:
-              activeTab === "inward" ? "#2563eb" : "#cbd5e1",
-            color:
-              activeTab === "inward" ? "#fff" : "#000",
-            cursor: "pointer",
-          }}
-        >
-          Movement Inward
-        </button>
+      <div style={cardStyle}>
+        <h3>Select Item</h3>
 
-        <button
-          onClick={() => setActiveTab("outward")}
-          style={{
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "8px",
-            background:
-              activeTab === "outward" ? "#2563eb" : "#cbd5e1",
-            color:
-              activeTab === "outward" ? "#fff" : "#000",
-            cursor: "pointer",
-          }}
+        <select
+          name="item_id"
+          value={form.item_id}
+          onChange={handleItemSelect}
+          style={inputStyle}
         >
-          Movement Outward
-        </button>
-      </div>
+          <option value="">Search / Select Item</option>
+          {itemsList.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.item_description} - {item.mpn}
+            </option>
+          ))}
+        </select>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          background: "#fff",
-          padding: "20px",
-          borderRadius: "12px",
-          marginBottom: "30px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "15px",
-          }}
-        >
+        <div style={gridStyle}>
           <input
-            type="text"
-            name="item_description"
-            placeholder="Item Description"
+            style={inputStyle}
             value={form.item_description}
-            onChange={handleChange}
+            placeholder="Item Description"
+            readOnly
           />
 
           <input
-            type="text"
-            name="mpn"
-            placeholder="MPN"
+            style={inputStyle}
             value={form.mpn}
-            onChange={handleChange}
+            placeholder="MPN"
+            readOnly
           />
 
-          <select
-            name="package_type"
+          <input
+            style={inputStyle}
             value={form.package_type}
-            onChange={handleChange}
-          >
-            <option>Reel</option>
-            <option>Tray</option>
-          </select>
-
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-          >
-            <option>Industrial</option>
-            <option>Automotive</option>
-            <option>Defence</option>
-          </select>
+            placeholder="Package Type"
+            readOnly
+          />
 
           <input
+            style={inputStyle}
+            value={form.category}
+            placeholder="Category"
+            readOnly
+          />
+
+          <input
+            style={inputStyle}
             type="date"
             name="date"
             value={form.date}
@@ -274,190 +211,235 @@ export default function MovementAnalysis() {
           />
 
           <input
-            type="number"
+            style={inputStyle}
             name="rate"
-            placeholder="Rate"
             value={form.rate}
+            placeholder="Rate"
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      <div style={cardStyle}>
+        <h3>Movement Inward Entry</h3>
+
+        <div style={gridStyle}>
+          <input
+            style={inputStyle}
+            type="date"
+            name="purchase_date"
+            value={form.purchase_date}
             onChange={handleChange}
           />
 
           <input
-            type="number"
-            name="gross_profit_percent"
-            placeholder="Gross Profit % / Loss Negative"
-            value={form.gross_profit_percent}
+            style={inputStyle}
+            name="current_stock"
+            value={form.current_stock}
+            placeholder="Current Stock"
             onChange={handleChange}
           />
 
-          {activeTab === "inward" && (
-            <>
-              <input
-                type="date"
-                name="purchase_date"
-                value={form.purchase_date}
-                onChange={handleChange}
-              />
-
-              <input
-                type="number"
-                name="current_stock"
-                placeholder="Current Stock"
-                value={form.current_stock}
-                onChange={handleChange}
-              />
-            </>
-          )}
-
-          {activeTab === "outward" && (
-            <>
-              <input
-                type="date"
-                name="billing_date"
-                value={form.billing_date}
-                onChange={handleChange}
-              />
-
-              <input
-                type="number"
-                name="total_stock_sell"
-                placeholder="Total Stock Sell"
-                value={form.total_stock_sell}
-                onChange={handleChange}
-              />
-            </>
-          )}
-
           <input
-            type="number"
-            name="total_quantity"
+            style={inputStyle}
+            name="inward_quantity"
+            value={form.inward_quantity}
             placeholder="Total Quantity"
-            value={form.total_quantity}
             onChange={handleChange}
           />
 
           <input
-            type="number"
-            name="total_amount"
+            style={inputStyle}
+            name="inward_total_amount"
+            value={form.inward_total_amount}
             placeholder="Total Amount"
-            value={form.total_amount}
             onChange={handleChange}
           />
         </div>
 
-        <button
-          type="submit"
-          style={{
-            marginTop: "20px",
-            padding: "12px 25px",
-            border: "none",
-            borderRadius: "8px",
-            background: "#16a34a",
-            color: "#fff",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Save
+        <button style={buttonStyle} onClick={saveInward}>
+          Save Inward
         </button>
-      </form>
+      </div>
 
-      <div
-        style={{
-          overflowX: "auto",
-          background: "#fff",
-          borderRadius: "12px",
-          padding: "20px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-        }}
-      >
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-          }}
-        >
-          <thead>
-            <tr
-              style={{
-                background: "#1e293b",
-                color: "#fff",
-              }}
-            >
-              <th style={thStyle}>Item</th>
-              <th style={thStyle}>MPN</th>
-              <th style={thStyle}>Package</th>
-              <th style={thStyle}>Category</th>
-              <th style={thStyle}>Date</th>
-              <th style={thStyle}>Rate</th>
-              <th style={thStyle}>GP %</th>
-              <th style={thStyle}>Total Amount</th>
+      <MovementTable title="Movement Inward" data={movementInward} type="inward" />
 
-              <th style={thStyle}>
-                {activeTab === "inward"
-                  ? "Average Purchase"
-                  : "Average Selling"}
-              </th>
-            </tr>
-          </thead>
+      <div style={cardStyle}>
+        <h3>Movement Outward Entry</h3>
 
-          <tbody>
-            {data.map((item) => (
-              <tr key={item.id}>
-                <td style={tdStyle}>
-                  {item.item_description}
-                </td>
+        <div style={gridStyle}>
+          <input
+            style={inputStyle}
+            type="date"
+            name="billing_date"
+            value={form.billing_date}
+            onChange={handleChange}
+          />
 
-                <td style={tdStyle}>{item.mpn}</td>
+          <input
+            style={inputStyle}
+            name="total_stock_sell"
+            value={form.total_stock_sell}
+            placeholder="Total Stock Sell"
+            onChange={handleChange}
+          />
 
-                <td style={tdStyle}>
-                  {item.package_type}
-                </td>
+          <input
+            style={inputStyle}
+            name="outward_quantity"
+            value={form.outward_quantity}
+            placeholder="Total Quantity"
+            onChange={handleChange}
+          />
 
-                <td style={tdStyle}>
-                  {item.category}
-                </td>
+          <input
+            style={inputStyle}
+            name="outward_total_amount"
+            value={form.outward_total_amount}
+            placeholder="Total Amount"
+            onChange={handleChange}
+          />
 
-                <td style={tdStyle}>{item.date}</td>
+          <input
+            style={inputStyle}
+            name="gross_profit_percent"
+            value={form.gross_profit_percent}
+            placeholder="Gross Profit % / Loss Negative"
+            onChange={handleChange}
+          />
+        </div>
 
-                <td style={tdStyle}>{item.rate}</td>
+        <button style={buttonStyle} onClick={saveOutward}>
+          Save Outward
+        </button>
+      </div>
 
+      <MovementTable title="Movement Outward" data={movementOutward} type="outward" />
+    </div>
+  );
+}
+
+function MovementTable({ title, data, type }) {
+  return (
+    <div style={cardStyle}>
+      <h3>{title}</h3>
+
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr style={{ background: "#1e293b", color: "#fff" }}>
+            <th style={thStyle}>Item</th>
+            <th style={thStyle}>MPN</th>
+            <th style={thStyle}>Package</th>
+            <th style={thStyle}>Category</th>
+            <th style={thStyle}>Date</th>
+            <th style={thStyle}>
+              {type === "inward" ? "Purchase Date" : "Billing Date"}
+            </th>
+            <th style={thStyle}>Rate</th>
+
+            {type === "outward" && <th style={thStyle}>GP %</th>}
+
+            <th style={thStyle}>
+              {type === "inward" ? "Current Stock" : "Total Stock Sell"}
+            </th>
+
+            <th style={thStyle}>Total Qty</th>
+            <th style={thStyle}>Total Amount</th>
+
+            <th style={thStyle}>
+              {type === "inward" ? "Avg Purchase" : "Avg Selling"}
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td style={tdStyle}>{item.item_description}</td>
+              <td style={tdStyle}>{item.mpn}</td>
+              <td style={tdStyle}>{item.package_type}</td>
+              <td style={tdStyle}>{item.category}</td>
+              <td style={tdStyle}>{item.date}</td>
+
+              <td style={tdStyle}>
+                {type === "inward" ? item.purchase_date : item.billing_date}
+              </td>
+
+              <td style={tdStyle}>{item.rate}</td>
+
+              {type === "outward" && (
                 <td
                   style={{
                     ...tdStyle,
                     color:
-                      Number(item.gross_profit_percent) < 0
-                        ? "red"
-                        : "green",
+                      Number(item.gross_profit_percent) < 0 ? "red" : "green",
                     fontWeight: "bold",
                   }}
                 >
                   {item.gross_profit_percent}%
                 </td>
+              )}
 
-                <td style={tdStyle}>
-                  ₹ {item.total_amount}
-                </td>
+              <td style={tdStyle}>
+                {type === "inward"
+                  ? item.current_stock
+                  : item.total_stock_sell}
+              </td>
 
-                <td style={tdStyle}>
-                  {activeTab === "inward"
-                    ? item.average_purchase
-                    : item.average_selling}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              <td style={tdStyle}>{item.total_quantity}</td>
+              <td style={tdStyle}>₹ {item.total_amount}</td>
+
+              <td style={tdStyle}>
+                {type === "inward"
+                  ? item.average_purchase
+                  : item.average_selling}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
 
+const cardStyle = {
+  background: "#fff",
+  padding: "20px",
+  borderRadius: "10px",
+  marginBottom: "25px",
+  boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+};
+
+const gridStyle = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+  gap: "15px",
+};
+
+const inputStyle = {
+  padding: "12px",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  marginTop: "10px",
+};
+
+const buttonStyle = {
+  marginTop: "20px",
+  padding: "12px 25px",
+  background: "#16a34a",
+  color: "#fff",
+  border: "none",
+  borderRadius: "8px",
+  fontWeight: "bold",
+  cursor: "pointer",
+};
+
 const thStyle = {
-  padding: "14px",
+  padding: "12px",
   textAlign: "left",
 };
 
 const tdStyle = {
   padding: "12px",
-  borderBottom: "1px solid #e2e8f0",
+  borderBottom: "1px solid #e5e7eb",
 };

@@ -112,7 +112,7 @@ export function mapSupplierQuotationForPrint(data) {
               mpn: "STM32F103",
               price: 118,
               currency: data.currency || "INR",
-              quotation_date: data.quotation_date || "2026-05-18",
+              quotation_date: data.quotation_date || "2026-05-16",
             },
           ],
   };

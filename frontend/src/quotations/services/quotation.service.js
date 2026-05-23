@@ -1,4 +1,37 @@
 const API_URL = "/api/quotations/";
+const QUOTATION_ITEMS_URL = "/api/quotations/items/";
+const ITEMS_URL = "/api/invoices/items/";
+
+async function getApiErrorMessage(response, fallbackMessage) {
+  let result = null;
+
+  try {
+    result = await response.json();
+  } catch {
+    return fallbackMessage;
+  }
+
+  const detail =
+    result?.message ||
+    result?.error ||
+    result?.detail ||
+    result?.non_field_errors?.[0];
+
+  if (detail) return detail;
+
+  if (result && typeof result === "object") {
+    const fieldErrors = Object.entries(result)
+      .map(([field, value]) => {
+        const message = Array.isArray(value) ? value.join(", ") : value;
+        return `${field}: ${message}`;
+      })
+      .join("; ");
+
+    if (fieldErrors) return fieldErrors;
+  }
+
+  return fallbackMessage;
+}
 
 export async function fetchQuotations() {
   const token = localStorage.getItem("access_token");
@@ -22,8 +55,90 @@ export async function fetchQuotations() {
   return [];
 }
 
+export async function fetchItems() {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(ITEMS_URL, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch items");
+  }
+
+  const result = await response.json();
+
+  if (Array.isArray(result)) return result;
+  if (Array.isArray(result.data)) return result.data;
+
+  return [];
+}
+
+export async function addQuotationItem(quotationId, itemData) {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(QUOTATION_ITEMS_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      quotation: quotationId,
+      ...itemData,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(await getApiErrorMessage(response, "Failed to add quotation item"));
+  }
+
+  return await response.json();
+}
+
+export async function updateQuotationItem(itemId, itemData) {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${QUOTATION_ITEMS_URL}${itemId}/`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(itemData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update quotation item");
+  }
+
+  return await response.json();
+}
+
+export async function deleteQuotationItem(itemId) {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${QUOTATION_ITEMS_URL}${itemId}/`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete quotation item");
+  }
+
+  return response.ok;
+}
+
 export function mapQuotationForPrint(quotation) {
-  const customer = quotation.customer || {};
+  // Handle both cases: when customer is an object or just an ID
+  const customer = typeof quotation.customer === 'object' ? quotation.customer : {};
 
   return {
     company: {
@@ -62,9 +177,9 @@ export function mapQuotationForPrint(quotation) {
         customer.dispatch_address ||
         customer.address ||
         `${customer.city || ""} ${customer.state || ""} ${customer.pin_code || ""}`,
-      gstin: customer.gst_number || "-",
-      pan: customer.pan_no || "-",
-      state: customer.state || "-",
+      gstin: quotation.gstin || customer.gst_number || "-",
+      pan: quotation.pan || customer.pan_no || "-",
+      state: quotation.state || customer.state || "-",
       contactPerson: quotation.contact_person || customer.contact_person_name || "-",
       email: quotation.customer_email || customer.email || "-",
       phone: quotation.customer_phone || customer.contact_number || "-",
