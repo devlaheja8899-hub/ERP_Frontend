@@ -17,6 +17,7 @@ export default function SalesOrderItemsTable({ items }) {
               <th className="px-2 py-3 text-right">Qty</th>
               <th className="px-2 py-3 text-right">Unit Price</th>
               <th className="px-2 py-3 text-right">Total</th>
+              <th className="px-2 py-3 text-right">Status</th>
             </tr>
           </thead>
 
@@ -36,9 +37,11 @@ export default function SalesOrderItemsTable({ items }) {
                   <td className="px-2 py-3 text-right">
                     {formatCurrency(item.unitPrice)}
                   </td>
+                 
                   <td className="px-2 py-3 text-right font-bold">
                     {formatCurrency(amount)}
                   </td>
+                  <td className="px-2 py-3 text-right">{item.status}</td>
                 </tr>
               );
             })}

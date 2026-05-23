@@ -55,6 +55,7 @@ const sampleSalesOrder = {
       packType: "Reel",
       quantity: 50000,
       unitPrice: 0.18,
+      status:"Dispatched"
     },
     {
       si: 2,
@@ -65,6 +66,7 @@ const sampleSalesOrder = {
       packType: "Reel",
       quantity: 10000,
       unitPrice: 0.06,
+      status:"Remaining"
     },
   ],
 

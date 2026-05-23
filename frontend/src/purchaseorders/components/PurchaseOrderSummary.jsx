@@ -57,12 +57,12 @@ export default function PurchaseOrderSummary({ purchaseOrder }) {
           </div>
 
           <div className="text-[11px]">
-            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+            {/* <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
               <span className="font-semibold text-slate-600">Total Quantity</span>
               <span className="font-medium text-slate-900">
                 {totals.totalQuantity}
               </span>
-            </div>
+            </div> */}
 
             <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
               <span className="text-slate-600">Round Off</span>

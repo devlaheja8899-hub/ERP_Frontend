@@ -85,7 +85,7 @@ export default function PurchaseOrderItemsTable({ items }) {
                 Total
               </td>
               <td className="border-r border-slate-300 px-3 py-3 text-center">
-                {totalQuantity}
+                Total Quantity : {totalQuantity}
               </td>
               <td className="border-r border-slate-300 px-3 py-3" />
               <td className="px-3 py-3 text-right">

@@ -6,7 +6,7 @@ import SupplierQuotationCommercialTerms from "./SupplierQuotationCommercialTerms
 import SupplierQuotationComparison from "./SupplierQuotationComparison.jsx";
 import SupplierQuotationFooter from "./SupplierQuotationFooter.jsx";
 
-export default function SupplierQuotationDocument({ quotation, forwardRef }) {
+export default function SupplierQuotationDocument({ quotation, forwardRef,mode="view" }) {
   return (
     <article
       ref={forwardRef}
@@ -31,15 +31,17 @@ export default function SupplierQuotationDocument({ quotation, forwardRef }) {
 
           <SupplierQuotationSupplier supplier={quotation.supplier} />
 
-          <SupplierQuotationItemsTable items={quotation.items} />
+          <SupplierQuotationItemsTable items={quotation.items}  />
 
           <SupplierQuotationCommercialTerms
             terms={quotation.commercialTerms}
           />
 
-          <SupplierQuotationComparison
-            comparisons={quotation.priceComparisons}
-          />
+          {mode !== "pdf" && (
+        <SupplierQuotationComparison
+          comparisons={quotation.priceComparisons}
+        />
+      )}
 
           <SupplierQuotationFooter quotation={quotation} />
         </div>

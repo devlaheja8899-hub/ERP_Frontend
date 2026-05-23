@@ -17,6 +17,7 @@ export default function SupplierQuotations() {
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [documentMode, setDocumentMode] = useState("view");
 
   const selectedQuotation = useMemo(() => {
     if (!quotations.length) return null;
@@ -57,13 +58,22 @@ export default function SupplierQuotations() {
   });
 
   const handleDownloadPDF = async () => {
-    if (!printRef.current || !selectedQuotation) return;
+  if (!printRef.current || !selectedQuotation) return;
+
+  try {
+    setDocumentMode("pdf");
+
+    // wait for rerender
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     await downloadSupplierQuotationPdf(
       printRef.current,
       `supplier-quotation-${selectedQuotation.quotation.quoteNumber}.pdf`
     );
-  };
+  } finally {
+    setDocumentMode("view");
+  }
+};
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#e2e8f0_0%,_#f8fafc_45%,_#e2e8f0_100%)]">
@@ -124,6 +134,7 @@ export default function SupplierQuotations() {
             <SupplierQuotationDocument
               quotation={selectedQuotation}
               forwardRef={printRef}
+              mode={documentMode}
             />
           </div>
         )}
